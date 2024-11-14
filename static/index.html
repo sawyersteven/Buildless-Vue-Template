@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@4.4.5/dist/vue-router.global.min.js"></script>
+
+    <!-- VueX -->
+    <script src="https://cdn.jsdelivr.net/npm/vuex@4.1.0/dist/vuex.global.min.js"></script>
+
+    <!-- Vuetify -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vuetify@3.7.4/dist/vuetify.min.js">
+    </script>
+
+    <!-- Material Icons-->
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <v-app id="app">
+        <v-layout class="rounded rounded-md">
+            <v-app-bar color="primary" prominent>
+                <v-app-bar-nav-icon variant="text" @click.stop="showNavDrawer = !showNavDrawer"></v-app-bar-nav-icon>
+
+                <v-toolbar-title>My files</v-toolbar-title>
+
+                <v-spacer></v-spacer>
+
+                <template v-if="$vuetify.display.mdAndUp">
+                    <v-btn icon="mdi-magnify" variant="text"></v-btn>
+
+                    <v-btn icon="mdi-filter" variant="text"></v-btn>
+                </template>
+
+                <v-btn icon="mdi-dots-vertical" variant="text"></v-btn>
+            </v-app-bar>
+
+            <v-navigation-drawer v-model="showNavDrawer">
+                <v-list-item link title="Home" to="/"></v-list-item>
+                <v-list-item link title="Page2" to="/page2"></v-list-item>
+                <v-list-item link title="Page3" to="/page3"></v-list-item>
+            </v-navigation-drawer>
+            <v-main>
+
+                <router-view></router-view>
+            </v-main>
+        </v-layout>
+
+    </v-app>
+
+</body>
+
+<script type="text/javascript">
+    const { createApp } = Vue
+    const { createVuetify } = Vuetify
+
+
+
+    const router = VueRouter.createRouter({
+        history: VueRouter.createWebHashHistory(),
+        routes: [
+            {
+                path: "/",
+                name: "home",
+                component: () => import("./pages/home.js")
+            },
+            {
+                path: "/page2",
+                name: "pg2",
+                component: () => import("./pages/page2.js")
+            },
+            {
+                path: "/page3",
+                name: "pg3",
+                component: () => import("./pages/page3.js")
+            }
+        ]
+    });
+
+    const app = createApp(
+        {
+            data() {
+                return {
+                    showNavDrawer: false,
+                }
+            },
+            methods: {
+                toggleTheme() {
+                    window.app.$vuetify.theme.name = window.app.$vuetify.theme.name == "dark" ? "light" : "dark";
+                },
+                setThemeDark(isDark) {
+                    window.app.$vuetify.theme.name = isDark ? "dark" : "light";
+                }
+            },
+            router: router
+        }
+    );
+
+    const store = Vuex.createStore({
+        state() {
+            return {
+                count: 0
+            }
+        },
+        mutations: {
+        }
+    })
+
+    app.use(store);
+    app.use(createVuetify());
+    app.use(router);
+
+    window.app = app.mount('#app');
+    window.app.setThemeDark(true);
+
+    // Disable context menu
+    document.addEventListener('contextmenu', function (event) {
+        event.preventDefault();
+    });
+
+    // Disable refresh
+    document.addEventListener('keydown', function (event) {
+        if (
+            event.key === 'F5' ||
+            (event.ctrlKey && event.key === 'r') ||
+            (event.metaKey && event.key === 'r')
+        ) {
+            event.preventDefault();
+        }
+    });
+
+</script>
+
+</html>
